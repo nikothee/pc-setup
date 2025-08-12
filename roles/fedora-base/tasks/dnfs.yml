@@ -40,6 +40,7 @@
     key: "{{ item }}"
     state: present
   with_items:
+    - https://repo.cider.sh/RPM-GPG-KEY # Cider
     - https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg # Google (Cloud SDK)
     - https://d2t3ff60b2tol4.cloudfront.net/repomd.xml.key # Insync
     - https://packages.microsoft.com/keys/microsoft.asc # VSCode
@@ -50,6 +51,7 @@
     src: "{{ role_path }}/files/yum-repos/{{ item }}.repo"
     dest: "/etc/yum.repos.d/{{ item }}.repo"
   with_items:
+    - cider
     - google-cloud-sdk
     - insync
     - vscode
@@ -142,8 +144,9 @@
     name: "{{ item }}"
     state: present
   with_items:
-    - code # Visual Studio Code
     - chromium # Google Chrome
+    - Cider # Cider
+    - code # Visual Studio Code
     - firefox # Firefox
     - insync # Insync
     - mpv # mpv media player
