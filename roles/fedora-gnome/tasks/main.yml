@@ -1,6 +1,6 @@
 ################################################################################
 ### Run installation tasks
 
-- include_tasks: dnfs.yml
+- include_tasks: rpm-ostree.yml
 - include_tasks: flatpaks.yml
 - include_tasks: configs.yml

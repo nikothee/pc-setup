@@ -1,6 +1,9 @@
 # PC Setup
 
-Ansible playbook for setting up my personal PC
+Ansible playbook for setting up my PC
+
+> [!IMPORTANT]
+> This playbook is tailored to my personal preferences and may not work for everyone. It is intended to set up a Fedora Silverblue environment for a developer like me.
 
 ## Installation
 
@@ -8,7 +11,13 @@ Ansible playbook for setting up my personal PC
    to the PC.
 2. [Optional] Change the host name in the [`site.yml`](site.yml) and
    [`inventory`](inventory) files
-3. Run the [`install.sh`](install.sh) script:
+3. Install requirements:
+    - `ansible`
+    - `zenity`
+4. Update download sources:
+    - [sops](./roles/fedora-base/tasks/rpm-ostree.yml#L110-111)
+    - [nerd-fonts](./roles/fedora-base/tasks/configs.yml#L164-165)
+5. Run the [`install.sh`](install.sh) script:
    ```shell
    . ./install.sh
    ```
@@ -83,11 +92,6 @@ This installs packages and configurations required for seamless usage of Intel
 GPU hardware on a fedora system.
 
 ## Troubleshooting
-
-- If Ansible hangs after you have entered the BECOME password **and** you have
-  set up fingerprint authentication, simply authenticate with your fingerprint
-  even if you are not prompted to. [This is a bug with
-  Ansible](https://github.com/ansible/ansible/issues/73308).
 
 You can test the Ansible Playbook using the `--check` flag when calling the
 Ansible Playbook command, like so:

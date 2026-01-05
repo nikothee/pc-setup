@@ -1,0 +1,14 @@
+################################################################################
+### Install packages
+
+- name: "rpm : Install Intel Graphics dependencies & tools"
+  become: true
+  community.general.rpm_ostree_pkg:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - mesa-vdpau-drivers # MESA graphics drivers
+    - intel-compute-runtime # Intel compute API support
+    - intel-gpu-tools # Intel GPU tools
+    - intel-level-zero # oneAPI L0 support
+    - intel-media-driver # Intel media driver (VAAPI)

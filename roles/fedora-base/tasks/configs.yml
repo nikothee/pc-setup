@@ -17,19 +17,13 @@
   community.general.git_config:
     name: pull.rebase # With rebasing, new commits will be created for the changes on your local branch that start after the changes on the remote branch instead of creating a merge commit.
     scope: global
-    value: true
+    value: "true"
 
 - name: "configs : Configure git fetch prune option"
   community.general.git_config:
     name: fetch.prune # This configuration will automatically clean Git objects in your repository locally whenever you fetch changes from remote.
     scope: global
-    value: true
-
-- name: "configs : Configure git rerere option"
-  community.general.git_config:
-    name: rerere.enabled # This configuration enables merge conflict resolution recording.
-    scope: global
-    value: true
+    value: "true"
 
 - name: "configs : Configure git nah alias"
   community.general.git_config:
@@ -86,6 +80,7 @@
 ################################################################################
 ### Install Starship prompt using cargo
 
+# FIXME: cargo is not in the environment path at this point
 - name: "configs : Install Starship Prompt (using cargo)"
   community.general.cargo:
     name: starship
@@ -98,30 +93,15 @@
   become: true
   file:
     path: /etc/containers/nodocker
-    state: file
+    state: touch
     mode: 644
 
 ################################################################################
 ### Install fonts
+### xref: https://github.com/azatecas/add-system-level-fonts-to-fedora-silverblue
 
 - block:
-    - name: "configs : Install font (Powerline Symbols) - Step 1/2"
-      become: true
-      get_url:
-        url: "https://github.com/powerline/powerline/raw/develop/font/PowerlineSymbols.otf"
-        dest: "/usr/share/fonts/PowerlineSymbols.otf"
-        owner: root
-        group: root
-    - name: "configs : Install font (Powerline Symbols) - Step 2/2"
-      become: true
-      get_url:
-        url: "https://github.com/powerline/powerline/raw/develop/font/10-powerline-symbols.conf"
-        dest: "/etc/fonts/conf.d/10-powerline-symbols.conf"
-        owner: root
-        group: root
-
-- block:
-    - name: "configs : Install Google fonts - Step 1/3 (set font list)"
+    - name: "configs : Install Google fonts - Step 1/6 (set font list)"
       set_fact:
         google_fonts:
           - "ibmplexsans/IBMPlexSans[wdth,wght].ttf"
@@ -137,55 +117,70 @@
           - "raleway/Raleway[wght].ttf"
           - "raleway/Raleway-Italic[wght].ttf"
           - "spacegrotesk/SpaceGrotesk[wght].ttf"
-    - name: "configs : Install Google fonts - Step 2/3 (create target directories)"
-      become: true
+    - name: "configs : Install Google fonts - Step 2/6 (create target directories)"
       file:
-        path: "/usr/share/fonts/google-fonts/{{ item | dirname }}"
+        path: "{{ ansible_env.HOME }}/rpmbuild/SOURCES/google-fonts/{{ item | dirname }}"
         state: directory
-        owner: root
-        group: root
       with_items: "{{ google_fonts }}"
-    - name: "configs : Install Google fonts - Step 3/3 (download font files)"
-      become: true
+    - name: "configs : Install Google fonts - Step 3/6 (download font files)"
       get_url:
         url: "https://github.com/google/fonts/raw/refs/heads/main/ofl/{{ item | urlencode }}"
-        dest: "/usr/share/fonts/google-fonts/{{ item }}"
-        owner: root
-        group: root
+        dest: "{{ ansible_env.HOME }}/rpmbuild/SOURCES/google-fonts/{{ item }}"
       with_items: "{{ google_fonts }}"
       retries: 3
       delay: 3
+    - name: "configs : Install Google fonts - Step 4/6 (create specs directory)"
+      file:
+        path: "{{ ansible_env.HOME }}/rpmbuild/SPECS/"
+        state: directory
+    - name: "configs : Install Google fonts - Step 5/6 (prepare rpm package)"
+      copy:
+        src: "{{ role_path }}/files/rpmfiles/nikos-google-fonts.spec"
+        dest: "{{ ansible_env.HOME }}/rpmbuild/SPECS/nikos-google-fonts.spec"
+    - name: "configs : Install Google fonts - Step 5/5 (create rpm package)"
+      command: "rpmbuild -ba {{ ansible_env.HOME }}/rpmbuild/SPECS/nikos-google-fonts.spec"
+    - name: "configs : Install Google fonts - Step 6/6 (install rpm package)"
+      become: true
+      community.general.rpm_ostree_pkg:
+        name: "{{ ansible_env.HOME }}/rpmbuild/RPMS/noarch/nikos-google-fonts-1.0-1.noarch.rpm"
+        state: present
 
 - block:
-    - name: "configs : Install Nerd Fonts - Step 1/3 (set font list)"
+    - name: "configs : Install Nerd Fonts - Step 1/6 (set font list)"
       set_fact:
         nerd_fonts:
           - IBMPlexMono
           - IntelOneMono
           - SpaceMono
           - UbuntuMono
-    - name: "configs : Install Nerd Fonts - Step 2/3 (create target directories)"
-      become: true
+    - name: "configs : Install Nerd Fonts - Step 2/6 (create target directories)"
       file:
-        path: "/usr/share/fonts/nerd-fonts/{{ item }}"
+        path: "{{ ansible_env.HOME }}/rpmbuild/SOURCES/nerd-fonts/{{ item }}"
         state: directory
-        owner: root
-        group: root
       with_items: "{{ nerd_fonts }}"
-    - name: "configs : Install Nerd Fonts - Step 3/3 (download font files)"
-      become: true
+    - name: "configs : Install Nerd Fonts - Step 3/6 (download font files)"
       unarchive:
         remote_src: true
-        src: "https://github.com/ryanoasis/nerd-fonts/releases/download/v3.3.0/{{ item | urlencode }}.tar.xz" # TODO: keep release version up-to-date
-        dest: "/usr/share/fonts/nerd-fonts/{{ item }}"
-        owner: root
-        group: root
+        src: "https://github.com/ryanoasis/nerd-fonts/releases/download/v3.4.0/{{ item | urlencode }}.tar.xz" # TODO: keep release version up-to-date
+        dest: "{{ ansible_env.HOME }}/rpmbuild/SOURCES/nerd-fonts/{{ item }}"
       with_items: "{{ nerd_fonts }}"
       retries: 3
       delay: 3
-
-- name: "configs : Reload font cache"
-  shell: fc-cache -vf
+    - name: "configs : Install Nerd Fonts - Step 4/6 (create specs directory)"
+      file:
+        path: "{{ ansible_env.HOME }}/rpmbuild/SPECS/"
+        state: directory
+    - name: "configs : Install Nerd Fonts - Step 5/6 (prepare rpm package)"
+      copy:
+        src: "{{ role_path }}/files/rpmfiles/nikos-nerd-fonts.spec"
+        dest: "{{ ansible_env.HOME }}/rpmbuild/SPECS/nikos-nerd-fonts.spec"
+    - name: "configs : Install Nerd Fonts - Step 5/5 (create rpm package)"
+      command: "rpmbuild -ba {{ ansible_env.HOME }}/rpmbuild/SPECS/nikos-nerd-fonts.spec"
+    - name: "configs : Install Nerd Fonts - Step 6/6 (install rpm package)"
+      become: true
+      community.general.rpm_ostree_pkg:
+        name: "{{ ansible_env.HOME }}/rpmbuild/RPMS/noarch/nikos-nerd-fonts-1.0-1.noarch.rpm"
+        state: present
 
 ################################################################################
 ### Copy dotfiles
@@ -231,18 +226,6 @@
   with_items:
     - delete-downloads
 
-# Warning! This breaks toolbox containers
-# - name: "configs : Install cron jobs (weekly)"
-#   become: true
-#   copy:
-#     src: "{{ role_path }}/files/cronjobs/weekly/{{ item }}"
-#     dest: "/etc/cron.weekly/"
-#     owner: root
-#     group: root
-#     mode: 0755
-#   with_items:
-#     - prune-unused-containers
-
 - name: "configs : Enable cron service"
   become: true
   service:
@@ -258,32 +241,34 @@
 ################################################################################
 ### Copy (dynamic) wallpapers
 
-- name: "configs : Copy wallpapers"
-  become: true
-  copy:
-    src: "{{ role_path }}/files/wallpapers/{{ item }}/{{ item }}"
-    dest: "/usr/share/backgrounds/"
-    owner: root
-    group: root
-  with_items:
-    - blender
-    - chroma_blue
-    - desert
-    - f36
-    - f39
-    - fakurian
-    - zelda
-
-################################################################################
-# ### Downlaod custom icon pack
-
-# FIXME: Repo is private, download won't work
-# - name: "configs : Download icon pack"
-#   become: true
-#   git:
-#     repo: "https://github.com/oriides/WinOSX-dark"
-#     dest: "/usr/share/icons/"
-#     accept_newhostkey: true
+- block:
+    - name: "configs : Install Wallpapers - Step 1/6 (set background list)"
+      set_fact:
+        backgrounds:
+          - chroma_blue
+          - f36
+          - f39
+          - zelda
+    - name: "configs : Install wallpapers - Step 2/6 (copy wallpapers to build directory)"
+      copy:
+        src: "{{ role_path }}/files/wallpapers/{{ item }}/{{ item }}"
+        dest: "{{ ansible_env.HOME }}/rpmbuild/SOURCES/backgrounds/"
+      with_items: "{{ backgrounds }}"
+    - name: "configs : Install wallpapers - Step 3/6 (create specs directory)"
+      file:
+        path: "{{ ansible_env.HOME }}/rpmbuild/SPECS/"
+        state: directory
+    - name: "configs : Install wallpapers - Step 4/6 (prepare rpm package)"
+      copy:
+        src: "{{ role_path }}/files/rpmfiles/nikos-wallpapers.spec"
+        dest: "{{ ansible_env.HOME }}/rpmbuild/SPECS/nikos-wallpapers.spec"
+    - name: "configs : Install wallpapers - Step 5/6 (create rpm package)"
+      command: "rpmbuild -ba {{ ansible_env.HOME }}/rpmbuild/SPECS/nikos-wallpapers.spec"
+    - name: "configs : Install wallpapers - Step 6/6 (install rpm package)"
+      become: true
+      community.general.rpm_ostree_pkg:
+        name: "{{ ansible_env.HOME }}/rpmbuild/RPMS/noarch/nikos-wallpapers-1.0-1.noarch.rpm"
+        state: present
 
 ################################################################################
 ### Wayland Fix for Solaar (Logitech Peripherals Manager)

@@ -1,0 +1,22 @@
+################################################################################
+### Install packages
+
+- name: "rpm : Install system utilities"
+  become: true
+  community.general.rpm_ostree_pkg:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - adw-gtk3-theme # libadwaita theme for GTK3 applications
+
+- name: "rpm : Install applications"
+  become: true
+  community.general.rpm_ostree_pkg:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - evolution # Evolution Mail client
+    - file-roller # archive manager
+    - file-roller-nautilus # archive manager
+    - gnome-tweaks # additional settings for GNOME
+    - seahorse # keys & secrets manager

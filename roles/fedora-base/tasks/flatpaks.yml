@@ -14,12 +14,14 @@
   flatpak:
     name: "{{ item }}"
     state: present
+    remote: flathub
   with_items:
     - org.audacityteam.Audacity # Audacity
-    - net.natesales.Aviator # Aviator (AV1 encoder GUI)
     - com.bitwarden.desktop # Bitwarden
     - org.blender.Blender # Blender
     - com.cassidyjames.butler # Butler (Home Assistant)
+    - org.chromium.Chromium # Chromium
+    - com.discordapp.Discord # Discord
     - com.github.wwmm.easyeffects # Easy Effects
     - com.github.tchx84.Flatseal # Flatseal
     - org.gimp.GIMP # GIMP
@@ -28,12 +30,14 @@
     - fr.handbrake.ghb.Plugin.IntelMediaSDK # Handbrake Plugin (Intel QSV)
     - org.inkscape.Inkscape # Inkscape
     - com.makemkv.MakeMKV # MakeMKV
+    - com.mattermost.Desktop # Mattermost
     - com.obsproject.Studio # OBS
     - com.obsproject.Studio.Plugin.Gstreamer # OBS Plugin
     - com.obsproject.Studio.Plugin.GStreamerVaapi # OBS Plugin
     - md.obsidian.Obsidian # Obsidian (Markdown Notes)
     - org.onlyoffice.desktopeditors # OnlyOffice
     - tv.plex.PlexDesktop # Plex
+    - org.signal.Signal # Signal
     - com.todoist.Todoist # Todoist
     - org.videolan.VLC # VLC
     - org.videolan.VLC.Plugin.bdj # VLC (Blu-Ray Java Menus)

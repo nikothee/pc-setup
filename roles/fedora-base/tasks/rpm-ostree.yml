@@ -1,0 +1,111 @@
+################################################################################
+### Prerequisites
+
+- name: "rpm : Install RPM Fusion free repository"
+  become: true
+  community.general.rpm_ostree_pkg:
+    name: "https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-{{ ansible_facts['distribution_major_version'] }}.noarch.rpm"
+    state: present
+    apply_live: true
+
+- name: "rpm : Install RPM Fusion nonfree repository"
+  become: true
+  community.general.rpm_ostree_pkg:
+    name: "https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-{{ ansible_facts['distribution_major_version'] }}.noarch.rpm"
+    state: present
+    apply_live: true
+
+################################################################################
+### 3rd-party repositories
+
+- name: "rpm : Copy repository files"
+  become: true
+  copy:
+    src: "{{ role_path }}/files/yum-repos/{{ item }}.repo"
+    dest: "/etc/yum.repos.d/{{ item }}.repo"
+    owner: root
+    group: root
+    mode: 0644
+  with_items:
+    - cider
+    - google-cloud-sdk
+    - code
+    - rancher-k3s-common-latest
+    - rpmfusion-nonfree-steam
+
+- name: "rpm : disable unwanted repositories"
+  become: true
+  community.general.move:
+    src: "/etc/yum.repos.d/{{ item }}.repo"
+    dest: "/etc/yum.repos.d/{{ item }}.repo.bak"
+  with_items:
+    - "_copr:copr.fedorainfracloud.org:phracek:PyCharm"
+    - google-chrome
+    - rpmfusion-nonfree-nvidia-driver
+
+################################################################################
+### Install packages
+
+- name: "rpm : Install system utilities"
+  become: true
+  community.general.rpm_ostree_pkg:
+    name: "{{ item }}"
+    state: present
+    apply_live: true
+  with_items:
+    - clang # clang
+    - cronie # cron # TODO: consider using systemd timers instead of cron
+    - cronie-anacron # cron (anacron)
+    - gamescope # micro-compositor
+    - git-lfs # git LFS
+    - google-cloud-cli # gcloud
+    - google-cloud-cli-gke-gcloud-auth-plugin # gcloud KMS plugin
+    - helm # k8s package manager
+    - kubernetes # k8s utilities
+    - llvm # llvm
+    - lldb # llvm (debugger)
+    - nodejs # nodejs (needed for sonarqube)
+    - fastfetch # system information
+    - fzf # fuzzy finder
+    - podman-compose # podman alias for docker compose
+    - podman-docker # podman alias for docker
+    - powerline # powerline
+    - powerline-fonts # powerline
+    - rpm-build # rpm build
+    - uxplay # AirPlay server
+    - vim-powerline # powerline
+    - rustup # rust toolchain installer
+    - tokei # code/file statistics
+    - zsh # zsh
+
+- name: "rpm : Install multimedia dependencies & codecs"
+  become: true
+  community.general.rpm_ostree_pkg:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - libheif-tools # HEIC/HEIF support
+    - lame # lame (mp3) audio codec
+    - libva-utils # video acceleration (VAAPI)
+    - gstreamer1-vaapi # video acceleration (VAAPI)
+
+- name: "rpm : Install applications"
+  become: true
+  community.general.rpm_ostree_pkg:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - Cider # Cider
+    - code # Visual Studio Code
+    - mpv # mpv media player
+    - solaar # Logitech peripherals manager
+    - steam # Steam
+
+- name: "rpm : Install non-repo packages"
+  become: true
+  community.general.rpm_ostree_pkg:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - "https://github.com/derailed/k9s/releases/latest/download/k9s_linux_amd64.rpm" # k9s
+    - "https://github.com/getsops/sops/releases/download/v3.11.0/sops-3.11.0-1.x86_64.rpm" # sops # TODO: keep up to date

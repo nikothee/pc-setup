@@ -6,13 +6,6 @@ if (($EUID == 0)); then
 fi
 
 ################################################################################
-### install ansible
-
-notify-send -i dialog-information "Prerequisites…" "Installing Ansible…"
-
-sudo dnf install -y ansible
-
-################################################################################
 ### get git credentials
 
 if [ -z "$GIT_NAME" ]; then
@@ -37,6 +30,8 @@ fi
 notify-send -i dialog-information "Starting installation…" "Running Ansible Playbook…"
 
 ansible-galaxy collection install community.general
+# sudo echo performs a sudo login which solves the issue of ansible silently waiting for fingerprint sensor input and stalling
+sudo echo "Enter your password to start the ansible playbook"
 ansible-playbook site.yml --inventory inventory --ask-become-pass
 
 ################################################################################
