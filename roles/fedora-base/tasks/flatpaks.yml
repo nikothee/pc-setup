@@ -31,6 +31,7 @@
     - org.inkscape.Inkscape # Inkscape
     - com.makemkv.MakeMKV # MakeMKV
     - com.mattermost.Desktop # Mattermost
+    - io.mpv.Mpv # mpv video player
     - com.obsproject.Studio # OBS
     - com.obsproject.Studio.Plugin.Gstreamer # OBS Plugin
     - com.obsproject.Studio.Plugin.GStreamerVaapi # OBS Plugin

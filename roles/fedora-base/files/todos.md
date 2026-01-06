@@ -18,6 +18,10 @@ Compile and install torchlight?
 
 - Veracrypt
 
+## Configure mpv to use hardware acceleration:
+
+for the flatpak mpv reads its config from within the flatpaks config dir not the user's config dir, meaning you need to manually copy the contents of `~/.config/mpv/mpv.conf` to `~/.var/app/io.mpv.Mpv/config/mpv/mpv.conf`
+
 ## Please manually install some PWAs through Chrome/ Chromium/ Chromium Based Browser
 
 - [Diagrams.net](https://app.diagrams.net)

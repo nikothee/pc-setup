@@ -42,6 +42,7 @@
     - "_copr:copr.fedorainfracloud.org:phracek:PyCharm"
     - google-chrome
     - rpmfusion-nonfree-nvidia-driver
+    - fedora-cisco-openh264
 
 ################################################################################
 ### Install packages
@@ -97,7 +98,6 @@
   with_items:
     - Cider # Cider
     - code # Visual Studio Code
-    - mpv # mpv media player
     - solaar # Logitech peripherals manager
     - steam # Steam
 
