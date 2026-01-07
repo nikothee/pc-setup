@@ -57,6 +57,8 @@
     - clang # clang
     - cronie # cron # TODO: consider using systemd timers instead of cron
     - cronie-anacron # cron (anacron)
+    - fastfetch # system information
+    - fzf # fuzzy finder
     - gamescope # micro-compositor
     - git-lfs # git LFS
     - google-cloud-cli # gcloud
@@ -66,17 +68,16 @@
     - llvm # llvm
     - lldb # llvm (debugger)
     - nodejs # nodejs (needed for sonarqube)
-    - fastfetch # system information
-    - fzf # fuzzy finder
+    - openssh-askpass # (enables password prompts for ssh with Yubikey)
     - podman-compose # podman alias for docker compose
     - podman-docker # podman alias for docker
     - powerline # powerline
     - powerline-fonts # powerline
     - rpm-build # rpm build
-    - uxplay # AirPlay server
-    - vim-powerline # powerline
     - rustup # rust toolchain installer
     - tokei # code/file statistics
+    - uxplay # AirPlay server
+    - vim-powerline # powerline
     - zsh # zsh
 
 - name: "rpm : Install multimedia dependencies & codecs"
@@ -100,12 +101,3 @@
     - code # Visual Studio Code
     - solaar # Logitech peripherals manager
     - steam # Steam
-
-- name: "rpm : Install non-repo packages"
-  become: true
-  community.general.rpm_ostree_pkg:
-    name: "{{ item }}"
-    state: present
-  with_items:
-    - "https://github.com/derailed/k9s/releases/latest/download/k9s_linux_amd64.rpm" # k9s
-    - "https://github.com/getsops/sops/releases/download/v3.11.0/sops-3.11.0-1.x86_64.rpm" # sops # TODO: keep up to date

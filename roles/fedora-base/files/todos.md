@@ -16,7 +16,10 @@ Compile and install torchlight?
 
 ## The Following Packages need to be manually installed
 
-- Veracrypt
+- [Veracrypt](https://veracrypt.io/en/Downloads.html)
+- [SOPS](https://github.com/getsops/sops/releases/latest)
+- [tilt](https://docs.tilt.dev/install.html#linux)
+- [k9s](https://github.com/derailed/k9s/releases/latest)
 
 ## Configure mpv to use hardware acceleration:
 
@@ -24,8 +27,9 @@ for the flatpak mpv reads its config from within the flatpaks config dir not the
 
 ## Please manually install some PWAs through Chrome/ Chromium/ Chromium Based Browser
 
-- [Diagrams.net](https://app.diagrams.net)
+- [Diagrams.net](https://app.diagrams.net/)
 - [WhatsApp Web](https://web.whatsapp.com/)
+- [Apple Podcasts](https://podcasts.apple.com/)
 - Google Docs suite (Just shortcuts)
 - Teams & Outlook for work
 
