@@ -28,21 +28,21 @@
     mode: 0644
   with_items:
     - cider
-    - google-cloud-sdk
     - code
+    - gh-cli
+    - google-cloud-sdk
     - rancher-k3s-common-latest
-    - rpmfusion-nonfree-steam
 
-- name: "rpm : disable unwanted repositories"
-  become: true
-  community.general.move:
-    src: "/etc/yum.repos.d/{{ item }}.repo"
-    dest: "/etc/yum.repos.d/{{ item }}.repo.bak"
-  with_items:
-    - "_copr:copr.fedorainfracloud.org:phracek:PyCharm"
-    - google-chrome
-    - rpmfusion-nonfree-nvidia-driver
-    - fedora-cisco-openh264
+# - name: "rpm : disable unwanted repositories"
+#   become: true
+#   community.general.move:
+#     src: "/etc/yum.repos.d/{{ item }}.repo"
+#     dest: "/etc/yum.repos.d/{{ item }}.repo.bak"
+#   with_items:
+#     - "_copr:copr.fedorainfracloud.org:phracek:PyCharm"
+#     - google-chrome
+#     - rpmfusion-nonfree-nvidia-driver
+#     - fedora-cisco-openh264
 
 ################################################################################
 ### Install packages
@@ -54,30 +54,33 @@
     state: present
     apply_live: true
   with_items:
+    - ansible # ansible
     - clang # clang
-    - cronie # cron # TODO: consider using systemd timers instead of cron
-    - cronie-anacron # cron (anacron)
     - fastfetch # system information
-    - fzf # fuzzy finder
     - gamescope # micro-compositor
+    - gh # github cli
     - git-lfs # git LFS
+    - glab # gitlab cli
     - google-cloud-cli # gcloud
     - google-cloud-cli-gke-gcloud-auth-plugin # gcloud KMS plugin
     - helm # k8s package manager
+    - kind # kind cluster
     - kubernetes # k8s utilities
     - llvm # llvm
     - lldb # llvm (debugger)
     - nodejs # nodejs (needed for sonarqube)
     - openssh-askpass # (enables password prompts for ssh with Yubikey)
+    - openssl-devel # openssl development files, needed for building some stuff
     - podman-compose # podman alias for docker compose
     - podman-docker # podman alias for docker
     - powerline # powerline
     - powerline-fonts # powerline
     - rpm-build # rpm build
     - rustup # rust toolchain installer
-    - tokei # code/file statistics
     - uxplay # AirPlay server
     - vim-powerline # powerline
+    - yq # yq
+    - zenity # zenity (dialogs)
     - zsh # zsh
 
 - name: "rpm : Install multimedia dependencies & codecs"
@@ -86,9 +89,7 @@
     name: "{{ item }}"
     state: present
   with_items:
-    - libheif-tools # HEIC/HEIF support
     - lame # lame (mp3) audio codec
-    - libva-utils # video acceleration (VAAPI)
     - gstreamer1-vaapi # video acceleration (VAAPI)
 
 - name: "rpm : Install applications"
