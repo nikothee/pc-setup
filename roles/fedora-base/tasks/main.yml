@@ -2,6 +2,8 @@
 ### Run installation tasks
 
 - include_tasks: rpm-ostree.yml
+- include_tasks: homebrew.yml
+- include_tasks: cargo.yml
 - include_tasks: flatpaks.yml
 - include_tasks: configs.yml
 

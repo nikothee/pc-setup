@@ -20,27 +20,44 @@
     - com.bitwarden.desktop # Bitwarden
     - org.blender.Blender # Blender
     - com.cassidyjames.butler # Butler (Home Assistant)
+    - page.codeberg.censor.Censor # Censor
     - org.chromium.Chromium # Chromium
+    - com.collaboraoffice.Office # Collabora Office (replaces OnlyOffice)
     - com.discordapp.Discord # Discord
     - com.github.wwmm.easyeffects # Easy Effects
     - com.github.tchx84.Flatseal # Flatseal
+    - it.mijorus.gearlever # Gear Lever (AppImage manager)
     - org.gimp.GIMP # GIMP
     - com.dec05eba.gpu_screen_recorder # GPU Screen Recorder
     - fr.handbrake.ghb # Handbrake
-    - fr.handbrake.ghb.Plugin.IntelMediaSDK # Handbrake Plugin (Intel QSV)
     - org.inkscape.Inkscape # Inkscape
     - com.makemkv.MakeMKV # MakeMKV
     - com.mattermost.Desktop # Mattermost
     - io.mpv.Mpv # mpv video player
     - com.obsproject.Studio # OBS
-    - com.obsproject.Studio.Plugin.Gstreamer # OBS Plugin
-    - com.obsproject.Studio.Plugin.GStreamerVaapi # OBS Plugin
     - md.obsidian.Obsidian # Obsidian (Markdown Notes)
-    - org.onlyoffice.desktopeditors # OnlyOffice
-    - tv.plex.PlexDesktop # Plex
+    - ch.protonmail.protonmail-bridge # Proton Mail Bridge
+    - com.protonvpn.www # Proton VPN
+    - io.github.CyberTimon.RapidRAW # RapidRAW (RAW photo editor)
     - org.signal.Signal # Signal
+    - io.github.pwr_solaar.solaar # Solaar (Logitech peripherals manager)
+    - com.valvesoftware.Steam # Steam
     - com.todoist.Todoist # Todoist
     - org.videolan.VLC # VLC
-    - org.videolan.VLC.Plugin.bdj # VLC (Blu-Ray Java Menus)
-    - org.videolan.VLC.Plugin.makemkv # VLC (MakeMKV decryption)
-    - dev.zed.Zed # Zed Editor
+  register: flatpak_result
+  failed_when: false # some Flathub app IDs occasionally get renamed; don't fail the whole run
+
+- name: "flatpaks : Install Cider"
+  ansible.builtin.debug:
+    msg: >
+      Cider is sideloaded from a .flatpak bundle rather than a Flathub/repo
+      remote, so it isn't automated here. Download the bundle from
+      https://cider.sh and install it with:
+      `flatpak install --user <path-to-cider.flatpak>`
+  # TODO: automate once Cider publishes a stable download URL / repo we can pin to
+
+################################################################################
+### NOTE: Zed Editor is intentionally NOT managed here anymore - it ships its
+### own self-updater and is installed via its official install script into
+### ~/.local/bin, which conflicts with Flatpak's sandboxing/update model.
+### See configs.yml (or run `curl -f https://zed.dev/install.sh | sh` manually).

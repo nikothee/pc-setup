@@ -19,4 +19,6 @@
     - file-roller # archive manager
     - file-roller-nautilus # archive manager
     - gnome-tweaks # additional settings for GNOME
-    - seahorse # keys & secrets manager
+
+################################################################################
+### NOTE: Seahorse (keys & secrets manager) moved to Flatpak, see flatpaks.yml

@@ -17,6 +17,9 @@
 
 ################################################################################
 ### 3rd-party repositories
+### NOTE: gh-cli, google-cloud-sdk & rancher-k3s repos are gone - those tools
+### now come from Homebrew (see homebrew.yml). cider.repo is gone too, Cider is
+### now installed from Flathub (see flatpaks.yml).
 
 - name: "rpm : Copy repository files"
   become: true
@@ -27,11 +30,7 @@
     group: root
     mode: 0644
   with_items:
-    - cider
     - code
-    - gh-cli
-    - google-cloud-sdk
-    - rancher-k3s-common-latest
 
 # - name: "rpm : disable unwanted repositories"
 #   become: true
@@ -46,6 +45,11 @@
 
 ################################################################################
 ### Install packages
+### NOTE: this list is intentionally kept minimal. Only things that genuinely
+### need to be layered onto the OS image (kernel/driver adjacent tooling,
+### things Flatpak/Homebrew/Cargo can't provide, or things needed system-wide
+### before those package managers are even available) belong here. Everything
+### else should go through homebrew.yml, cargo.yml or flatpaks.yml instead.
 
 - name: "rpm : Install system utilities"
   become: true
@@ -54,32 +58,24 @@
     state: present
     apply_live: true
   with_items:
-    - ansible # ansible
     - clang # clang
-    - fastfetch # system information
+    - flatpak-builder # build flatpaks locally
     - gamescope # micro-compositor
-    - gh # github cli
     - git-lfs # git LFS
-    - glab # gitlab cli
-    - google-cloud-cli # gcloud
-    - google-cloud-cli-gke-gcloud-auth-plugin # gcloud KMS plugin
-    - helm # k8s package manager
-    - kind # kind cluster
-    - kubernetes # k8s utilities
+    - ImageMagick-heic # HEIC support for ImageMagick
     - llvm # llvm
     - lldb # llvm (debugger)
-    - nodejs # nodejs (needed for sonarqube)
+    - nodejs # nodejs (needed for sonarqube, needs to be system-wide)
     - openssh-askpass # (enables password prompts for ssh with Yubikey)
     - openssl-devel # openssl development files, needed for building some stuff
     - podman-compose # podman alias for docker compose
     - podman-docker # podman alias for docker
     - powerline # powerline
     - powerline-fonts # powerline
-    - rpm-build # rpm build
-    - rustup # rust toolchain installer
+    - rpm-build # rpm build (used for the local wallpaper/font rpms below)
+    - rustup # rust toolchain installer (bootstraps cargo, chicken-and-egg)
     - uxplay # AirPlay server
     - vim-powerline # powerline
-    - yq # yq
     - zenity # zenity (dialogs)
     - zsh # zsh
 
@@ -98,7 +94,13 @@
     name: "{{ item }}"
     state: present
   with_items:
-    - Cider # Cider
     - code # Visual Studio Code
-    - solaar # Logitech peripherals manager
-    - steam # Steam
+    - steam-devices # udev rules for Steam controllers (Steam itself is a Flatpak now)
+
+################################################################################
+### NOTE: the following used to be layered rpm-ostree packages and have since
+### moved to other package managers, kept here for reference:
+###   - ansible, fastfetch, gh, glab, google-cloud-cli(-*), helm, kind,
+###     kubernetes, yq            -> Homebrew (see homebrew.yml)
+###   - Cider, solaar, steam      -> Flatpak (see flatpaks.yml)
+###   - k3s-selinux               -> no longer used, k8s tooling is client-only now

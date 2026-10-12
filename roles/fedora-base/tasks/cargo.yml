@@ -1,0 +1,31 @@
+################################################################################
+### Prerequisites
+### NOTE: rustup itself is still installed as a layered rpm-ostree package
+### (see rpm-ostree.yml) since it needs to be present system-wide before any
+### user-level cargo install can run.
+
+- name: "cargo : Install Rust Toolchain"
+  shell: |
+    rustup-init -y
+
+################################################################################
+### Install crates
+### NOTE: this is where general-purpose Rust CLI tools now live, replacing
+### what used to be one-off cargo installs sprinkled through configs.yml.
+
+- name: "cargo : Install crates"
+  community.general.cargo:
+    name: "{{ item }}"
+    locked: true
+  with_items:
+    - bottom # btm - system monitor
+    - cargo-tarpaulin # code coverage
+    - cargo-update # cargo-install-update - keeps cargo installed crates up to date
+    - dioxus-cli # dx - dioxus dev cli
+    - mdbook # mdbook
+    - mdbook-callouts # mdbook-callouts
+    - rage # rage/rage-keygen - age encryption
+    - ripgrep # rg
+    - starship # shell prompt
+    - tirith # tirith
+    - tokei # tokei - code stats

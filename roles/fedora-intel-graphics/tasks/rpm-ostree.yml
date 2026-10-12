@@ -1,5 +1,8 @@
 ################################################################################
 ### Install packages
+### NOTE: mesa-vdpau-drivers & intel-media-driver used to be layered here, but
+### ublue's Silverblue image now ships hardware video acceleration out of the
+### box, so only the compute/debugging tooling still needs to be layered.
 
 - name: "rpm : Install Intel Graphics dependencies & tools"
   become: true
@@ -7,8 +10,6 @@
     name: "{{ item }}"
     state: present
   with_items:
-    - mesa-vdpau-drivers # MESA graphics drivers
     - intel-compute-runtime # Intel compute API support
     - intel-gpu-tools # Intel GPU tools
     - intel-level-zero # oneAPI L0 support
-    - intel-media-driver # Intel media driver (VAAPI)

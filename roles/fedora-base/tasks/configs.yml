@@ -71,20 +71,7 @@
     #   dest: "{{ ansible_env.HOME }}/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting"
 
 ################################################################################
-### Install Rust
-
-- name: "configs : Install Rust Toolchain"
-  shell: |
-    rustup-init -y
-
-################################################################################
-### Install Starship prompt using cargo
-
-# FIXME: cargo is not in the environment path at this point
-- name: "configs : Install Starship Prompt (using cargo)"
-  community.general.cargo:
-    name: starship
-    locked: true
+### NOTE: Rust toolchain install & Starship (via cargo) moved to cargo.yml
 
 ################################################################################
 ### Suppress podman-docker warning

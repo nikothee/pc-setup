@@ -1,0 +1,65 @@
+################################################################################
+### Prerequisites
+
+- name: "homebrew : Check if Homebrew is already installed"
+  stat:
+    path: /home/linuxbrew/.linuxbrew/bin/brew
+  register: homebrew_bin
+
+- name: "homebrew : Install Homebrew"
+  shell: |
+    NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+  when: not homebrew_bin.stat.exists
+
+################################################################################
+### Install packages
+### NOTE: this is where most CLI tooling now lives, since it doesn't need to be
+### baked into the base OS image and updates independently of rpm-ostree.
+
+- name: "homebrew : Install formulae"
+  community.general.homebrew:
+    name: "{{ item }}"
+    state: present
+    path: /home/linuxbrew/.linuxbrew/bin/brew
+  with_items:
+    - ansible # ansible
+    - deno # deno runtime
+    - fastfetch # system information
+    - gh # github cli
+    - glab # gitlab cli
+    - helm # k8s package manager
+    - k9s # k8s TUI
+    - kind # kind cluster
+    - krew # kubectl plugin manager
+    - kubernetes-cli # kubectl
+    - ollama # local LLM runner
+    - pipx # isolated python CLI app installer
+    - skopeo # container image inspection
+    - sops # secrets management
+    - yq # yq
+    - yt-dlp # yt-dlp
+
+################################################################################
+### Install casks
+
+- name: "homebrew : Install casks"
+  community.general.homebrew_cask:
+    name: "{{ item }}"
+    state: present
+    path: /home/linuxbrew/.linuxbrew/bin/brew
+  with_items:
+    - font-ibm-plex-sans
+    - font-ibm-plex-serif
+    - font-inter
+    - font-lexend
+    - font-montserrat
+    - font-outfit
+    - font-raleway
+    - font-space-grotesk
+    - font-space-mono-nerd-font
+    - gcloud-cli # gcloud (replaces google-cloud-cli rpm-ostree package)
+
+################################################################################
+### NOTE: the google-cloud-sdk & gh-cli & rancher-k3s yum repos are gone, along
+### with the rpm-ostree packages they used to provide (gh, glab, google-cloud-cli
+### & friends, helm, kind, kubernetes) - all of that now comes from Homebrew.

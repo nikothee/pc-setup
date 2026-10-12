@@ -21,7 +21,7 @@
     - com.mattjakeman.ExtensionManager # Extension Manager
     - org.gnome.Firmware # Firmware
     - com.github.johnfactotum.Foliate # Foliate (eBook reader)
-    - io.github.nokse22.inspector # Inspector
     - io.missioncenter.MissionCenter # Mission Center (System Monitor)
     - org.gnome.World.PikaBackup # Pika Backup
     - org.gnome.PowerStats # Power Statistics
+    - org.gnome.seahorse.Application # Passwords and Keys (formerly an rpm-ostree package)

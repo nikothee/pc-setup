@@ -15,8 +15,7 @@ Ansible playbook for setting up my PC
     - `ansible`
     - `zenity`
 4. Update download sources:
-    - [sops](./roles/fedora-base/tasks/rpm-ostree.yml#L110-111)
-    - [nerd-fonts](./roles/fedora-base/tasks/configs.yml#L164-165)
+    - [nerd-fonts release version](./roles/fedora-base/tasks/configs.yml#L164)
 5. Run the [`install.sh`](install.sh) script:
    ```shell
    . ./install.sh
@@ -55,9 +54,27 @@ Ansible playbook for setting up my PC
 The `roles` folder contains the configurations for the different roles (see
 [Roles](#roles) for more details). Each role contains some `tasks` and
 optionally some `files` that are used to set up the PC. Tasks are usually
-grouped into `dnfs`, `flatpaks` and `configs` the contents of which is applied
-through the corresponding `main.yml`. Change the contents of these tasks to
-make changes to how the PC is set up.
+grouped by the package manager they use — `rpm-ostree`, `homebrew`, `cargo`
+and `flatpaks` — plus a catch-all `configs` for everything else. The contents
+of each of these are applied through the corresponding `main.yml`. Change the
+contents of these tasks to make changes to how the PC is set up.
+
+#### Package management philosophy
+
+Since migrating to Fedora Silverblue, `rpm-ostree` layering is used as
+sparingly as possible (it requires a reboot/rebase and bloats the base image).
+The general rule of thumb for where a package belongs:
+
+- **rpm-ostree** — only for things that must be present system-wide before
+  other package managers are available (e.g. `rustup`, `flatpak-builder`),
+  or for kernel/driver-adjacent tooling that Flatpak/Homebrew can't provide
+  (e.g. Intel GPU compute runtime, codecs).
+- **Homebrew** — the default choice for CLI tools and utilities. Installed
+  under `/home/linuxbrew/.linuxbrew` and kept up to date independently of the
+  OS image.
+- **Cargo** — Rust-native CLI tools, installed via `rustup`-provided cargo.
+- **Flatpak** — the default choice for GUI applications, sandboxed and kept
+  up to date independently of the OS image.
 
 The `install.sh` script is used to start the PC setup installation
 
