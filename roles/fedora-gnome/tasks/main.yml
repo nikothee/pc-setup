@@ -4,3 +4,4 @@
 - include_tasks: rpm-ostree.yml
 - include_tasks: flatpaks.yml
 - include_tasks: configs.yml
+  tags: wallpapers

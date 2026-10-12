@@ -64,11 +64,11 @@
     dest: "{{ item.dest }}"
   loop:
     - repo: "https://github.com/zsh-users/zsh-autosuggestions"
-      dest: "{{ ansible_env.HOME }}/.oh-my-zsh/custom/plugins/zsh-autosuggestions"
+      dest: "{{ ansible_facts['env']['HOME'] }}/.oh-my-zsh/custom/plugins/zsh-autosuggestions"
     - repo: "https://github.com/Aloxaf/fzf-tab"
-      dest: "{{ ansible_env.HOME }}/.oh-my-zsh/custom/plugins/fzf-tab"
+      dest: "{{ ansible_facts['env']['HOME'] }}/.oh-my-zsh/custom/plugins/fzf-tab"
     # - repo: "https://github.com/zsh-users/zsh-syntax-highlighting"
-    #   dest: "{{ ansible_env.HOME }}/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting"
+    #   dest: "{{ ansible_facts['env']['HOME'] }}/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting"
 
 ################################################################################
 ### NOTE: Rust toolchain install & Starship (via cargo) moved to cargo.yml
@@ -106,30 +106,30 @@
           - "spacegrotesk/SpaceGrotesk[wght].ttf"
     - name: "configs : Install Google fonts - Step 2/6 (create target directories)"
       file:
-        path: "{{ ansible_env.HOME }}/rpmbuild/SOURCES/google-fonts/{{ item | dirname }}"
+        path: "{{ ansible_facts['env']['HOME'] }}/rpmbuild/SOURCES/google-fonts/{{ item | dirname }}"
         state: directory
       with_items: "{{ google_fonts }}"
     - name: "configs : Install Google fonts - Step 3/6 (download font files)"
       get_url:
         url: "https://github.com/google/fonts/raw/refs/heads/main/ofl/{{ item | urlencode }}"
-        dest: "{{ ansible_env.HOME }}/rpmbuild/SOURCES/google-fonts/{{ item }}"
+        dest: "{{ ansible_facts['env']['HOME'] }}/rpmbuild/SOURCES/google-fonts/{{ item }}"
       with_items: "{{ google_fonts }}"
       retries: 3
       delay: 3
     - name: "configs : Install Google fonts - Step 4/6 (create specs directory)"
       file:
-        path: "{{ ansible_env.HOME }}/rpmbuild/SPECS/"
+        path: "{{ ansible_facts['env']['HOME'] }}/rpmbuild/SPECS/"
         state: directory
     - name: "configs : Install Google fonts - Step 5/6 (prepare rpm package)"
       copy:
         src: "{{ role_path }}/files/rpmfiles/nikos-google-fonts.spec"
-        dest: "{{ ansible_env.HOME }}/rpmbuild/SPECS/nikos-google-fonts.spec"
+        dest: "{{ ansible_facts['env']['HOME'] }}/rpmbuild/SPECS/nikos-google-fonts.spec"
     - name: "configs : Install Google fonts - Step 5/5 (create rpm package)"
-      command: "rpmbuild -ba {{ ansible_env.HOME }}/rpmbuild/SPECS/nikos-google-fonts.spec"
+      command: "rpmbuild -ba {{ ansible_facts['env']['HOME'] }}/rpmbuild/SPECS/nikos-google-fonts.spec"
     - name: "configs : Install Google fonts - Step 6/6 (install rpm package)"
       become: true
       community.general.rpm_ostree_pkg:
-        name: "{{ ansible_env.HOME }}/rpmbuild/RPMS/noarch/nikos-google-fonts-1.0-1.noarch.rpm"
+        name: "{{ ansible_facts['env']['HOME'] }}/rpmbuild/RPMS/noarch/nikos-google-fonts-1.0-1.noarch.rpm"
         state: present
 
 - block:
@@ -142,31 +142,31 @@
           - UbuntuMono
     - name: "configs : Install Nerd Fonts - Step 2/6 (create target directories)"
       file:
-        path: "{{ ansible_env.HOME }}/rpmbuild/SOURCES/nerd-fonts/{{ item }}"
+        path: "{{ ansible_facts['env']['HOME'] }}/rpmbuild/SOURCES/nerd-fonts/{{ item }}"
         state: directory
       with_items: "{{ nerd_fonts }}"
     - name: "configs : Install Nerd Fonts - Step 3/6 (download font files)"
       unarchive:
         remote_src: true
         src: "https://github.com/ryanoasis/nerd-fonts/releases/download/v3.4.0/{{ item | urlencode }}.tar.xz" # TODO: keep release version up-to-date
-        dest: "{{ ansible_env.HOME }}/rpmbuild/SOURCES/nerd-fonts/{{ item }}"
+        dest: "{{ ansible_facts['env']['HOME'] }}/rpmbuild/SOURCES/nerd-fonts/{{ item }}"
       with_items: "{{ nerd_fonts }}"
       retries: 3
       delay: 3
     - name: "configs : Install Nerd Fonts - Step 4/6 (create specs directory)"
       file:
-        path: "{{ ansible_env.HOME }}/rpmbuild/SPECS/"
+        path: "{{ ansible_facts['env']['HOME'] }}/rpmbuild/SPECS/"
         state: directory
     - name: "configs : Install Nerd Fonts - Step 5/6 (prepare rpm package)"
       copy:
         src: "{{ role_path }}/files/rpmfiles/nikos-nerd-fonts.spec"
-        dest: "{{ ansible_env.HOME }}/rpmbuild/SPECS/nikos-nerd-fonts.spec"
+        dest: "{{ ansible_facts['env']['HOME'] }}/rpmbuild/SPECS/nikos-nerd-fonts.spec"
     - name: "configs : Install Nerd Fonts - Step 5/5 (create rpm package)"
-      command: "rpmbuild -ba {{ ansible_env.HOME }}/rpmbuild/SPECS/nikos-nerd-fonts.spec"
+      command: "rpmbuild -ba {{ ansible_facts['env']['HOME'] }}/rpmbuild/SPECS/nikos-nerd-fonts.spec"
     - name: "configs : Install Nerd Fonts - Step 6/6 (install rpm package)"
       become: true
       community.general.rpm_ostree_pkg:
-        name: "{{ ansible_env.HOME }}/rpmbuild/RPMS/noarch/nikos-nerd-fonts-1.0-1.noarch.rpm"
+        name: "{{ ansible_facts['env']['HOME'] }}/rpmbuild/RPMS/noarch/nikos-nerd-fonts-1.0-1.noarch.rpm"
         state: present
 
 ################################################################################
@@ -240,23 +240,23 @@
     - name: "configs : Install wallpapers - Step 2/6 (copy wallpapers to build directory)"
       copy:
         src: "{{ role_path }}/files/wallpapers/{{ item }}/{{ item }}"
-        dest: "{{ ansible_env.HOME }}/rpmbuild/SOURCES/backgrounds/"
+        dest: "{{ ansible_facts['env']['HOME'] }}/rpmbuild/SOURCES/backgrounds/"
       with_items: "{{ backgrounds }}"
     - name: "configs : Install wallpapers - Step 3/6 (create specs directory)"
       file:
-        path: "{{ ansible_env.HOME }}/rpmbuild/SPECS/"
+        path: "{{ ansible_facts['env']['HOME'] }}/rpmbuild/SPECS/"
         state: directory
     - name: "configs : Install wallpapers - Step 4/6 (prepare rpm package)"
       copy:
         src: "{{ role_path }}/files/rpmfiles/nikos-wallpapers.spec"
-        dest: "{{ ansible_env.HOME }}/rpmbuild/SPECS/nikos-wallpapers.spec"
+        dest: "{{ ansible_facts['env']['HOME'] }}/rpmbuild/SPECS/nikos-wallpapers.spec"
     - name: "configs : Install wallpapers - Step 5/6 (create rpm package)"
-      command: "rpmbuild -ba {{ ansible_env.HOME }}/rpmbuild/SPECS/nikos-wallpapers.spec"
+      command: "rpmbuild -ba {{ ansible_facts['env']['HOME'] }}/rpmbuild/SPECS/nikos-wallpapers.spec"
     - name: "configs : Install wallpapers - Step 6/6 (install rpm package)"
-      become: true
-      community.general.rpm_ostree_pkg:
-        name: "{{ ansible_env.HOME }}/rpmbuild/RPMS/noarch/nikos-wallpapers-1.0-1.noarch.rpm"
-        state: present
+      # replace the layered package in one transaction, a rebuilt rpm with the same version can't be installed on top of the old one
+      # no become needed, polkit allows wheel members to (un)install packages (become would wait on the fingerprint reader)
+      command: "rpm-ostree uninstall --idempotent nikos-wallpapers --install={{ ansible_facts['env']['HOME'] }}/rpmbuild/RPMS/noarch/nikos-wallpapers-1.0-1.noarch.rpm"
+  tags: wallpapers
 
 ################################################################################
 ### Wayland Fix for Solaar (Logitech Peripherals Manager)

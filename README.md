@@ -21,6 +21,48 @@ Ansible playbook for setting up my PC
    . ./install.sh
    ```
 
+## Wallpapers
+
+Wallpapers are packaged into two local rpms that are layered with
+`rpm-ostree`:
+
+- `nikos-wallpapers` (role `fedora-base`) contains the images and dynamic
+  time-of-day xmls, installed to `/usr/share/backgrounds/<name>/`.
+- `nikos-wallpapers-gnome` (role `fedora-gnome`) contains the xmls that make
+  them show up in the GNOME settings, installed to
+  `/usr/share/gnome-background-properties/`.
+
+### Adding a wallpaper
+
+1. Put the images in `roles/fedora-base/files/wallpapers/<name>/<name>/`.
+2. [Optional] Add a dynamic `<name>.xml` in the same folder that switches
+   between the images depending on the time of day (see `f36` or `zelda`).
+3. Add `roles/fedora-gnome/files/wallpapers/<name>/<name>.xml` that lists the
+   light/dark variant and, if present, the dynamic xml (see `zelda`).
+4. Add `<name>` to the `backgrounds` list in both
+   `roles/fedora-base/tasks/configs.yml` and
+   `roles/fedora-gnome/tasks/configs.yml`.
+
+All paths in the xmls point to `/usr/share/backgrounds/<name>/<file>`.
+
+### Installing only the wallpapers
+
+The wallpaper tasks are tagged with `wallpapers`, so they can be run without
+the rest of the playbook:
+
+```shell
+ansible-playbook site.yml --inventory inventory --tags wallpapers
+```
+
+No sudo password is needed: the rpms are built in the home directory and
+`rpm-ostree` lets members of the `wheel` group (un)install packages without
+`sudo`.
+
+Reboot afterwards to boot into the new deployment. Since the rpms are rebuilt
+with the same version on every run, the old packages are uninstalled and the new
+ones installed in a single `rpm-ostree` transaction, so every run stages a new
+deployment, even if nothing changed.
+
 ## Repository Structure
 
 ```text

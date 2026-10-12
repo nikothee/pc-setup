@@ -6,6 +6,7 @@
 - include_tasks: cargo.yml
 - include_tasks: flatpaks.yml
 - include_tasks: configs.yml
+  tags: wallpapers
 
 ################################################################################
 ### Copy todo file into home directory

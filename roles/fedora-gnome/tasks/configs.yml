@@ -13,23 +13,23 @@
     - name: "configs : Install wallpapers - Step 2/6 (copy wallpapers to build directory)"
       copy:
         src: "{{ role_path }}/files/wallpapers/{{ item }}/{{ item }}.xml"
-        dest: "{{ ansible_env.HOME }}/rpmbuild/SOURCES/gnome-background-properties/"
+        dest: "{{ ansible_facts['env']['HOME'] }}/rpmbuild/SOURCES/gnome-background-properties/"
       with_items: "{{ backgrounds }}"
     - name: "configs : Install wallpapers - Step 3/6 (create specs directory)"
       file:
-        path: "{{ ansible_env.HOME }}/rpmbuild/SPECS/"
+        path: "{{ ansible_facts['env']['HOME'] }}/rpmbuild/SPECS/"
         state: directory
     - name: "configs : Install wallpapers - Step 4/6 (prepare rpm package)"
       copy:
         src: "{{ role_path }}/files/rpmfiles/nikos-wallpapers-gnome.spec"
-        dest: "{{ ansible_env.HOME }}/rpmbuild/SPECS/nikos-wallpapers-gnome.spec"
+        dest: "{{ ansible_facts['env']['HOME'] }}/rpmbuild/SPECS/nikos-wallpapers-gnome.spec"
     - name: "configs : Install wallpapers - Step 5/6 (create rpm package)"
-      command: "rpmbuild -ba {{ ansible_env.HOME }}/rpmbuild/SPECS/nikos-wallpapers-gnome.spec"
+      command: "rpmbuild -ba {{ ansible_facts['env']['HOME'] }}/rpmbuild/SPECS/nikos-wallpapers-gnome.spec"
     - name: "configs : Install wallpapers - Step 6/6 (install rpm package)"
-      become: true
-      community.general.rpm_ostree_pkg:
-        name: "{{ ansible_env.HOME }}/rpmbuild/RPMS/noarch/nikos-wallpapers-gnome-1.0-1.noarch.rpm"
-        state: present
+      # replace the layered package in one transaction, a rebuilt rpm with the same version can't be installed on top of the old one
+      # no become needed, polkit allows wheel members to (un)install packages (become would wait on the fingerprint reader)
+      command: "rpm-ostree uninstall --idempotent nikos-wallpapers-gnome --install={{ ansible_facts['env']['HOME'] }}/rpmbuild/RPMS/noarch/nikos-wallpapers-gnome-1.0-1.noarch.rpm"
+  tags: wallpapers
 
 ################################################################################
 ### Install GNOME Extensions

@@ -3,33 +3,33 @@
     <year>2023</year>
     <month>09</month>
     <day>01</day>
-    <hour>8</hour>
+    <hour>10</hour>
     <minute>00</minute>
     <second>00</second>
   </starttime>
-  <!-- This animation will start at 8 AM. -->
+  <!-- This animation will start at 10 AM. -->
 
-  <!-- We start with noon at 8 AM. It will remain up for 10 hours. -->
+  <!-- We start with noon at 10 AM. It will remain up for 7 hours. -->
   <static>
-    <duration>36000.0</duration>
+    <duration>25200.0</duration>
     <file>/usr/share/backgrounds/wow_silithus/Chronicle_4_Silithus_Noon.avif</file>
   </static>
 
-  <!-- Noon ended and starts to transition to evening at 6 PM. The transition lasts for 2 hours,
-  ending at 8 PM. -->
+  <!-- Noon ended and starts to transition to evening at 5 PM. The transition lasts for 4 hours,
+  ending at 9 PM. -->
   <transition type="overlay">
-    <duration>7200.0</duration>
+    <duration>14400.0</duration>
     <from>/usr/share/backgrounds/wow_silithus/Chronicle_4_Silithus_Noon.avif</from>
     <to>/usr/share/backgrounds/wow_silithus/Chronicle_4_Silithus_Evening.avif</to>
   </transition>
 
-  <!-- It's 8 PM, we're showing the evening till 6 AM. -->
+  <!-- It's 9 PM, we're showing the evening till 8 AM. -->
   <static>
-    <duration>36000.0</duration>
+    <duration>39600.0</duration>
     <file>/usr/share/backgrounds/wow_silithus/Chronicle_4_Silithus_Evening.avif</file>
   </static>
 
-  <!-- It's 6 AM, and we're starting to transition to noon. Transition completes at 8 AM. -->
+  <!-- It's 8 AM, and we're starting to transition to noon. Transition completes at 10 AM. -->
   <transition type="overlay">
     <duration>7200.0</duration>
     <from>/usr/share/backgrounds/wow_silithus/Chronicle_4_Silithus_Evening.avif</from>
