@@ -235,6 +235,7 @@
           - chroma_blue
           - f36
           - f39
+          - wow_silithus
           - zelda
     - name: "configs : Install wallpapers - Step 2/6 (copy wallpapers to build directory)"
       copy:
